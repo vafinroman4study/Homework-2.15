@@ -2,6 +2,7 @@ package pro.sky.java.course2;
 
 import pro.sky.java.course2.exceptions.IndexOutOfBoundsException;
 import pro.sky.java.course2.exceptions.NoSuchElementException;
+import pro.sky.java.course2.exceptions.NullArgumentException;
 
 public class StringListImpl implements StringList {
 
@@ -19,10 +20,15 @@ public class StringListImpl implements StringList {
     // в качестве результата выполнения.
     @Override
     public String add(String item) {
-        if (item != null) {
-            stringRepo[length] = item;
-            length++;
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        } else if (length>=stringRepo.length) {
+            String[] workArray = new String[stringRepo.length + 1];
+            System.arraycopy(stringRepo, 0, workArray, 0, stringRepo.length);
+            stringRepo = workArray;
         }
+        stringRepo[length] = item;
+        length++;
         return item;
     }
 
@@ -38,7 +44,9 @@ public class StringListImpl implements StringList {
         if (index > length || index < 0 ) {
             throw new IndexOutOfBoundsException("Индекс за пределами размера списка!");
         }
-        if (item != null) {
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        }else{
             length++;
             if ((index == stringRepo.length) || (stringRepo[index] != null)) {
                 if (stringRepo[stringRepo.length - 1] != null) {
@@ -63,8 +71,8 @@ public class StringListImpl implements StringList {
             }
 
             stringRepo[index] = item;
+            return item;
         }
-        return item;
     }
 
     // Установить элемент
@@ -78,9 +86,13 @@ public class StringListImpl implements StringList {
     public String set(int index, String item) {
         if (index > length || index >= stringRepo.length) {
             throw new IndexOutOfBoundsException("Индекс за пределами размера списка!");
+        } else if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        }else{
+            stringRepo[index] = item;
+            return item;
         }
-        stringRepo[index] = item;
-        return item;
+
     }
 
     // Удаление элемента.
@@ -89,17 +101,21 @@ public class StringListImpl implements StringList {
     // элемент отсутствует в списке.
     @Override
     public String remove(String item) {
-        int i = this.indexOf(item);
-        if (i<0) {
-            throw new NoSuchElementException("Удаляемый элемент не найден!");
-        }
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        } else {
+            int i = this.indexOf(item);
+            if (i<0) {
+                throw new NoSuchElementException("Удаляемый элемент не найден!");
+            }
 
-        for (int j = i; j < length-1; j++) {
-            stringRepo[j] = stringRepo[j+1];
+            for (int j = i; j < length-1; j++) {
+                stringRepo[j] = stringRepo[j+1];
+            }
+            stringRepo[length-1] = null;
+            length--;
+            return item;
         }
-        stringRepo[length-1] = null;
-        length--;
-        return item;
     }
 
     // Удаление элемента по индексу.
@@ -125,17 +141,19 @@ public class StringListImpl implements StringList {
     @Override
     public boolean contains(String item) {
         boolean flagNotFound = true;
-        if (item != null) {
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        } else {
             int i = 0;
             while (flagNotFound) {
-                flagNotFound = (!stringRepo[i].equals(item));
+                flagNotFound = !item.equals(stringRepo[i]);
                 i++;
                 if (i == stringRepo.length) {
                     break;
                 }
             }
+            return !flagNotFound;
         }
-        return !flagNotFound;
     }
 
     // Поиск элемента.
@@ -145,17 +163,19 @@ public class StringListImpl implements StringList {
     public int indexOf(String item) {
         boolean flagNotFound = true;
         int i = 0;
-        if (item != null) {
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        } else {
             while (flagNotFound) {
-                flagNotFound = (!stringRepo[i].equals(item));
+                flagNotFound = (!item.equals(stringRepo[i]));
                 i++;
                 if (i == stringRepo.length && flagNotFound) {
                     i = 0;
                     break;
                 }
             }
+            return --i;
         }
-        return --i;
     }
 
     // Поиск элемента с конца.
@@ -164,20 +184,21 @@ public class StringListImpl implements StringList {
     @Override
     public int lastIndexOf(String item) {
         boolean flagNotFound = true;
-        int res = -1;
+        //int res = -1;
         int i = stringRepo.length-1;
-        if (item != null) {
+        if (item == null) {
+            throw new NullArgumentException("В метод передан null аргумент!");
+        } else {
             while (flagNotFound) {
-                flagNotFound = (!stringRepo[i].equals(item));
+                flagNotFound = (!item.equals(stringRepo[i]));
                 i--;
                 if (i == 0 && flagNotFound) {
                     i = -2;
                     break;
                 }
             }
-            res = ++i;
+            return ++i;
         }
-        return res;
     }
 
     // Получить элемент по индексу.

@@ -9,6 +9,7 @@ import pro.sky.java.course2.StringList;
 import pro.sky.java.course2.StringListImpl;
 import pro.sky.java.course2.exceptions.IndexOutOfBoundsException;
 import pro.sky.java.course2.exceptions.NoSuchElementException;
+import pro.sky.java.course2.exceptions.NullArgumentException;
 
 import java.util.stream.Stream;
 
@@ -45,10 +46,10 @@ public class StringListTest {
         String[] result = stringList.toArray();
         Assertions.assertArrayEquals(expected, result);
 
-        stringList.set(0, null);
-        expected = new String[]{null, "2", "three", null, null};
-        result = stringList.toArray();
-        Assertions.assertArrayEquals(expected, result);
+        Assertions.assertThrows(
+                NullArgumentException.class,
+                () -> stringList.set(0, null)
+        );
 
         Assertions.assertThrows(
                 IndexOutOfBoundsException.class,
@@ -153,8 +154,7 @@ public class StringListTest {
     public static Stream<Arguments> provideParametersForAddTest() {
         return Stream.of(
                 Arguments.of(new String[] {"oneMore"}, new String[] {"one", "two", "three", "oneMore", null}),
-                Arguments.of(new String[] {"oneMore", "twoMore"}, new String[] {"one", "two", "three", "oneMore", "twoMore"}),
-                Arguments.of(new String[] {"oneMore", null, "threeMore"}, new String[] {"one", "two", "three", "oneMore", "threeMore"})
+                Arguments.of(new String[] {"oneMore", "twoMore"}, new String[] {"one", "two", "three", "oneMore", "twoMore"})
         );
     }
 
@@ -169,18 +169,9 @@ public class StringListTest {
     public static Stream<Arguments> provideParametersForEmptyTest() {
         return Stream.of(
                 Arguments.of(new String[] {"one"}, false, false),
-                Arguments.of( new String[1], false, true),
                 Arguments.of(new String[] {"one"}, true, true),
                 Arguments.of(new String[] {"one", "two"}, true, false)
         );
     }
 
 }
-
-
-
-//
-//    String remove(String item);
-//
-//    String remove(int index);
-
