@@ -12,10 +12,40 @@ public class IntegerListImpl implements IntegerList {
     private Integer[] integerRepo;
     private final int initLength = 5;
 
+    private void grow() {
+        Integer[] workArray = new Integer[(int) (integerRepo.length * 1.5)];
+        System.arraycopy(integerRepo, 0, workArray, 0, integerRepo.length);
+        integerRepo = workArray;
+    }
+
     private static void swapElements(Integer[] arr, int indexA, int indexB) {
         int tmp = arr[indexA];
         arr[indexA] = arr[indexB];
         arr[indexB] = tmp;
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    public static void quickSort(Integer[] arr, int begin, int end){
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
+        }
     }
 
     public IntegerListImpl(Integer[] initArray) {
@@ -36,9 +66,7 @@ public class IntegerListImpl implements IntegerList {
         if (item == null) {
             throw new NullArgumentException("В метод передан null аргумент!");
         } else if (length>=integerRepo.length) {
-            Integer[] workArray = new Integer[integerRepo.length + 1];
-            System.arraycopy(integerRepo, 0, workArray, 0, integerRepo.length);
-            integerRepo = workArray;
+            grow();
         }
         integerRepo[length] = item;
         length++;
@@ -277,45 +305,12 @@ public class IntegerListImpl implements IntegerList {
     }
 
     @Override
-    public Integer[] sortBubble() {
-        Integer[] res = Arrays.copyOf(integerRepo, length);
-        for (int i = 0; i < res.length - 1; i++) {
-            for (int j = 0; j < res.length - 1 - i; j++) {
-                if (res[j] > res[j + 1]) {
-                    swapElements(res, j, j + 1);
-                }
-            }
-        }
-        return  res;
-    }
-
-    @Override
-    public Integer[] sortSelection() {
-        Integer[] res = Arrays.copyOf(integerRepo, length);
-        for (int i = 0; i < length - 1; i++) {
-            int minElementIndex = i;
-            for (int j = i + 1; j < length; j++) {
-                if (res[j] < res[minElementIndex]) {
-                    minElementIndex = j;
-                }
-            }
-            swapElements(res, i, minElementIndex);
-        }
-        return  res;
-    }
-
-    @Override
     public Integer[] sort() {
         Integer[] res = Arrays.copyOf(integerRepo, length);
-        for (int i = 1; i < length; i++) {
-            int temp = res[i];
-            int j = i;
-            while (j > 0 && res[j - 1] >= temp) {
-                res[j] = res[j - 1];
-                j--;
-            }
-            res[j] = temp;
-        }
-        return  res;
+        int begin = 0;
+        int end = length - 1;
+
+        quickSort(res, begin, end);
+        return res;
     }
 }
