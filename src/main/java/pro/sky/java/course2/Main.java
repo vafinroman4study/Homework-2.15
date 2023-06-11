@@ -30,7 +30,9 @@ public class Main {
 
         IntegerList intList = new IntegerListImpl(generateRandomArray(10, 10));
         System.out.println(Arrays.toString(intList.toArray()));
-        System.out.println("intList.size() = " + intList.size());
+
+        intList.sort();
+
 
     }
 }

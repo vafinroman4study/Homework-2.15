@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,7 +11,18 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class IntegerListTest {
-    private IntegerList integerList;
+
+    @Test
+    public void addAndGrowTest() {
+        Integer[] arr = Main.generateRandomArray(11, 50);
+        IntegerList integerList = new IntegerListImpl(arr);
+        integerList.add(100);
+        Assertions.assertTrue(
+                integerList.contains(100)
+                && integerList.size() == arr.length + 1
+                && integerList.toArray().length == (int) (arr.length * 1.5)
+        );
+    }
 
     @ParameterizedTest
     @MethodSource("provideParametersForTest")
